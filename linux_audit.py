@@ -1,45 +1,87 @@
+#!/usr/bin/env python3
+
 import os
 import subprocess
 from datetime import datetime
 
-# Create or overwrite report
-with open("audit_report.txt", "w") as report:
-    report.write("====================================\n")
-    report.write("    LINUX SECURITY AUDIT REPORT     \n")
-    report.write("====================================\n")
-    report.write(f"Date: {datetime.now()}\n\n")
+output_file = "linux_audit_report.txt"
+report = open(output_file, "w")
 
-    # 1. Firewall Status
-    report.write("[1] Firewall Status:\n")
-    report.write(subprocess.getoutput("ufw status") + "\n")
-    report.write(subprocess.getoutput("iptables -L") + "\n\n")
+report.write("Linux Hardening Audit Report\n")
+report.write("Generated on: " + str(datetime.now()) + "\n\n")
 
-    # 2. SSH Configuration
-    report.write("[2] SSH Configuration (PermitRootLogin, PasswordAuthentication):\n")
-    report.write(subprocess.getoutput("grep -Ei 'PermitRootLogin|PasswordAuthentication' /etc/ssh/sshd_config") + "\n\n")
+score = 0
+total_checks = 5
+recommendations = []
 
-    # 3. Sudo Users
-    report.write("[3] Sudo Users:\n")
-    report.write(subprocess.getoutput("getent group sudo") + "\n\n")
+# 1. Firewall check
+report.write("[1] Firewall Status:\n")
+ufw_status = subprocess.getoutput("ufw status")
+if "active" in ufw_status:
+    score += 1
+    report.write("✔ UFW is active [PASS]\n")
+else:
+    report.write("✖ UFW is inactive [FAIL]\n")
+    recommendations.append("Enable UFW firewall: `sudo ufw enable`")
+report.write(ufw_status + "\n\n")
 
-    # 4. World Writable Files
-    report.write("[4] World Writable Files (first 10):\n")
-    report.write(subprocess.getoutput("find / -type f -perm -o+w 2>/dev/null | head -n 10") + "\n\n")
+# 2. SSH Configuration check
+report.write("[2] SSH Configuration:\n")
+ssh_config = subprocess.getoutput("grep -Ei 'PermitRootLogin|PasswordAuthentication' /etc/ssh/sshd_config")
+if "PermitRootLogin no" in ssh_config:
+    score += 1
+    report.write("✔ PermitRootLogin is disabled [PASS]\n")
+else:
+    report.write("✖ PermitRootLogin may be enabled [FAIL]\n")
+    recommendations.append("Disable root login via SSH: `PermitRootLogin no`")
 
-    # 5. Running Services at Boot
-    report.write("[5] Running Services at Boot:\n")
-    report.write(subprocess.getoutput("systemctl list-unit-files --state=enabled") + "\n\n")
+if "PasswordAuthentication no" in ssh_config:
+    score += 1
+    report.write("✔ Password authentication is disabled [PASS]\n")
+else:
+    report.write("✖ Password authentication may be enabled [FAIL]\n")
+    recommendations.append("Disable password-based SSH login: `PasswordAuthentication no`")
+report.write(ssh_config + "\n\n")
 
-    # 6. File Permissions
-    report.write("[6] /etc/passwd and /etc/shadow Permissions:\n")
-    report.write(subprocess.getoutput("ls -l /etc/passwd /etc/shadow") + "\n\n")
+# 3. File permissions check
+report.write("[3] File Permissions (/etc/passwd and /etc/shadow):\n")
+permissions = subprocess.getoutput("ls -l /etc/passwd /etc/shadow")
+report.write(permissions + "\n")
+if "-rw-r--r--" in permissions and "----------" in permissions:
+    score += 1
+    report.write("✔ Permissions are secure [PASS]\n")
+else:
+    report.write("✖ Permissions may be weak [FAIL]\n")
+    recommendations.append("Ensure /etc/shadow is only readable by root.")
+report.write("\n")
 
-    # 7. Rootkit Check (Optional)
-    report.write("[7] Rootkit Check (chkrootkit):\n")
-    if subprocess.getoutput("which chkrootkit"):
-        report.write(subprocess.getoutput("chkrootkit | head -n 10") + "\n\n")
-    else:
-        report.write("chkrootkit not installed.\n\n")
+# 4. Unused services
+report.write("[4] Disabled Services (potentially unused):\n")
+disabled_services = subprocess.getoutput("systemctl list-unit-files --state=disabled")
+report.write(disabled_services + "\n")
+score += 1
 
-    report.write("Audit complete ✅. See audit_report.txt\n")
+# 5. Rootkit check
+report.write("[5] Rootkit Check (chkrootkit):\n")
+if subprocess.getoutput("which chkrootkit"):
+    rootkit_output = subprocess.getoutput("sudo chkrootkit")
+    report.write(rootkit_output + "\n")
+    score += 1
+else:
+    report.write("chkrootkit not installed. Skipping...\n")
+    recommendations.append("Install chkrootkit to scan for rootkits.")
 
+# Final summary
+report.write("\n==============================\n")
+report.write(f"Security Score: {score}/{total_checks}\n")
+report.write("==============================\n\n")
+
+report.write(" Recommendations:\n")
+if recommendations:
+    for rec in recommendations:
+        report.write("- " + rec + "\n")
+else:
+    report.write("System appears well-configured. No major actions needed.\n")
+
+report.close()
+print(f" Audit complete. Report saved to {output_file}")
