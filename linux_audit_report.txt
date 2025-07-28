@@ -1,0 +1,138 @@
+Linux Hardening Audit Report
+Generated on: 2025-07-28 16:57:28.593836
+
+[1] Firewall Status:
+✖ UFW is inactive [FAIL]
+/bin/sh: 1: ufw: not found
+
+[2] SSH Configuration:
+✖ PermitRootLogin may be enabled [FAIL]
+✖ Password authentication may be enabled [FAIL]
+#PermitRootLogin prohibit-password
+#PasswordAuthentication yes
+# PasswordAuthentication.  Depending on your PAM configuration,
+# the setting of "PermitRootLogin prohibit-password".
+# PAM authentication, then enable this but set PasswordAuthentication
+
+[3] File Permissions (/etc/passwd and /etc/shadow):
+-rw-r--r-- 1 root root   3203 May 30 00:55 /etc/passwd
+-rw-r----- 1 root shadow 1419 May 30 00:55 /etc/shadow
+✖ Permissions may be weak [FAIL]
+
+[4] Disabled Services (potentially unused):
+UNIT FILE                                    STATE    PRESET
+proc-sys-fs-binfmt_misc.mount                disabled disabled
+run-lock.mount                               disabled enabled
+apache-htcacheclean.service                  disabled disabled
+apache-htcacheclean@.service                 disabled disabled
+apache2.service                              disabled disabled
+apache2@.service                             disabled disabled
+apparmor.service                             disabled disabled
+avahi-daemon.service                         disabled disabled
+blueman-mechanism.service                    disabled disabled
+bluetooth.service                            disabled disabled
+console-getty.service                        disabled disabled
+debug-shell.service                          disabled disabled
+e2scrub_reap.service                         disabled disabled
+faraday.service                              disabled disabled
+gophish.service                              disabled disabled
+grub-common.service                          disabled disabled
+gvmd.service                                 disabled disabled
+ifupdown-wait-online.service                 disabled disabled
+kismet.service                               disabled disabled
+lm-sensors.service                           disabled disabled
+mariadb.service                              disabled disabled
+mariadb@.service                             disabled disabled
+miredo.service                               disabled disabled
+mosquitto.service                            disabled disabled
+nfs-blkmap.service                           disabled disabled
+nftables.service                             disabled disabled
+nginx.service                                disabled disabled
+nmbd.service                                 disabled disabled
+notus-scanner.service                        disabled disabled
+openvpn-client@.service                      disabled disabled
+openvpn-server@.service                      disabled disabled
+openvpn.service                              disabled disabled
+openvpn@.service                             disabled disabled
+ospd-openvas.service                         disabled disabled
+pg_receivewal@.service                       disabled disabled
+postgresql.service                           disabled disabled
+postgresql@.service                          disabled disabled
+ppp@.service                                 disabled disabled
+redis-server.service                         disabled disabled
+redis-server@.service                        disabled disabled
+redsocks.service                             disabled disabled
+rpcbind.service                              disabled disabled
+rsync.service                                disabled enabled
+rtkit-daemon.service                         disabled enabled
+samba-ad-dc.service                          disabled disabled
+serial-getty@.service                        disabled disabled
+smbd.service                                 disabled disabled
+snmpd.service                                disabled disabled
+speech-dispatcherd.service                   disabled disabled
+ssh.service                                  disabled disabled
+sshd-keygen.service                          disabled disabled
+sslh.service                                 disabled disabled
+strongswan-starter.service                   disabled disabled
+stunnel@.service                             disabled disabled
+sysstat.service                              disabled disabled
+systemd-boot-check-no-failures.service       disabled disabled
+systemd-confext.service                      disabled enabled
+systemd-network-generator.service            disabled enabled
+systemd-networkd-wait-online.service         disabled enabled
+systemd-networkd-wait-online@.service        disabled disabled
+systemd-networkd.service                     disabled enabled
+systemd-pcrlock-file-system.service          disabled disabled
+systemd-pcrlock-firmware-code.service        disabled disabled
+systemd-pcrlock-firmware-config.service      disabled disabled
+systemd-pcrlock-machine-id.service           disabled disabled
+systemd-pcrlock-make-policy.service          disabled disabled
+systemd-pcrlock-secureboot-authority.service disabled disabled
+systemd-pcrlock-secureboot-policy.service    disabled disabled
+systemd-sysext.service                       disabled enabled
+systemd-time-wait-sync.service               disabled disabled
+systemd-udev-load-credentials.service        disabled disabled
+udisks2.service                              disabled disabled
+upower.service                               disabled disabled
+vpnc@.service                                disabled disabled
+winbind.service                              disabled disabled
+wpa_supplicant-nl80211@.service              disabled disabled
+wpa_supplicant-wired@.service                disabled disabled
+wpa_supplicant.service                       disabled disabled
+wpa_supplicant@.service                      disabled disabled
+wtmpdb-update-boot.service                   disabled disabled
+atftpd.socket                                disabled disabled
+avahi-daemon.socket                          disabled disabled
+rpcbind.socket                               disabled disabled
+saned.socket                                 disabled disabled
+ssh.socket                                   disabled disabled
+systemd-journald-audit.socket                disabled enabled
+systemd-journald@.socket                     disabled disabled
+systemd-networkd.socket                      disabled disabled
+systemd-pcrextend.socket                     disabled disabled
+systemd-pcrlock.socket                       disabled disabled
+systemd-sysext.socket                        disabled disabled
+exit.target                                  disabled disabled
+halt.target                                  disabled disabled
+kexec.target                                 disabled disabled
+poweroff.target                              disabled disabled
+reboot.target                                disabled enabled
+pg_basebackup@.timer                         disabled enabled
+pg_compresswal@.timer                        disabled enabled
+pg_dump@.timer                               disabled enabled
+wtmpdb-rotate.timer                          disabled enabled
+
+100 unit files listed.
+[5] Rootkit Check (chkrootkit):
+chkrootkit not installed. Skipping...
+
+==============================
+Security Score: 1/5
+==============================
+
+ Recommendations:
+- Enable UFW firewall: `sudo ufw enable`
+- Disable root login via SSH: `PermitRootLogin no`
+- Disable password-based SSH login: `PasswordAuthentication no`
+- Ensure /etc/shadow is only readable by root.
+- Install chkrootkit to scan for rootkits.
