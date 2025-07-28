@@ -1,0 +1,85 @@
+====================================
+    LINUX SECURITY AUDIT REPORT     
+====================================
+Date: 2025-07-26 23:54:47.244267
+
+[1] Firewall Status:
+/bin/sh: 1: ufw: not found
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination         
+
+Chain FORWARD (policy ACCEPT)
+target     prot opt source               destination         
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination         
+
+[2] SSH Configuration (PermitRootLogin, PasswordAuthentication):
+#PermitRootLogin prohibit-password
+#PasswordAuthentication yes
+# PasswordAuthentication.  Depending on your PAM configuration,
+# the setting of "PermitRootLogin prohibit-password".
+# PAM authentication, then enable this but set PasswordAuthentication
+
+[3] Sudo Users:
+sudo:x:27:kali
+
+[4] World Writable Files (first 10):
+/proc/sys/kernel/ns_last_pid
+/proc/pressure/io
+/proc/pressure/cpu
+/proc/pressure/memory
+/proc/1/task/1/attr/current
+/proc/1/task/1/attr/exec
+/proc/1/task/1/attr/fscreate
+/proc/1/task/1/attr/keycreate
+/proc/1/task/1/attr/sockcreate
+/proc/1/task/1/attr/apparmor/current
+
+[5] Running Services at Boot:
+UNIT FILE                          STATE   PRESET
+accounts-daemon.service            enabled enabled
+console-setup.service              enabled enabled
+cron.service                       enabled enabled
+getty@.service                     enabled enabled
+grub-install-devices.service       enabled disabled
+haveged.service                    enabled enabled
+keyboard-setup.service             enabled enabled
+lightdm.service                    enabled disabled
+ModemManager.service               enabled enabled
+networking.service                 enabled enabled
+NetworkManager-dispatcher.service  enabled disabled
+NetworkManager-wait-online.service enabled disabled
+NetworkManager.service             enabled enabled
+regenerate-ssh-host-keys.service   enabled enabled
+smartmontools.service              enabled enabled
+systemd-pstore.service             enabled enabled
+systemd-timesyncd.service          enabled enabled
+virtualbox-guest-utils.service     enabled enabled
+pcscd.socket                       enabled enabled
+nfs-client.target                  enabled enabled
+remote-fs.target                   enabled enabled
+stunnel.target                     enabled enabled
+apt-daily-upgrade.timer            enabled disabled
+apt-daily.timer                    enabled disabled
+dpkg-db-backup.timer               enabled enabled
+e2scrub_all.timer                  enabled enabled
+fstrim.timer                       enabled enabled
+logrotate.timer                    enabled enabled
+man-db.timer                       enabled enabled
+phpsessionclean.timer              enabled enabled
+plocate-updatedb.timer             enabled enabled
+sysstat-collect.timer              enabled enabled
+sysstat-rotate.timer               enabled enabled
+sysstat-summary.timer              enabled enabled
+
+34 unit files listed.
+
+[6] /etc/passwd and /etc/shadow Permissions:
+-rw-r--r-- 1 root root   3203 May 29 15:25 /etc/passwd
+-rw-r----- 1 root shadow 1419 May 29 15:25 /etc/shadow
+
+[7] Rootkit Check (chkrootkit):
+chkrootkit not installed.
+
+Audit complete ✅. See audit_report.txt
